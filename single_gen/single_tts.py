@@ -17,7 +17,7 @@ while not os.path.isfile(os.path.join(project_root, 'README.md')):
 
 
 
-pdata = pd.read_csv(project_root+'\\config\\data_1.csv')
+pdata = pd.read_csv(project_root+'/config/tts_config.csv')
 
 tts_key = pdata.iloc[1, 1]
 tts_url = pdata.iloc[3, 1]

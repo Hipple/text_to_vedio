@@ -100,10 +100,10 @@ def merge_vedio(image_dir_path,audio_dir_path,parent):
     # if not os.path.exists(new_parent):
     #     os.makedirs(new_parent)
     new_path = image_dir_path.replace("data_image","data_vedio")
-    reulst_path = '\\'.join(new_path.rsplit('\\', 2)[:-1])+'\\'+parent
+    reulst_path = '/'.join(new_path.rsplit('/', 2)[:-1])+'/'+parent
     if not os.path.exists(reulst_path):
         os.makedirs(reulst_path)
-    final_clip.write_videofile(reulst_path+'\\'+new_path.rsplit('\\', 1)[-1]+".mp4", fps=24,audio_codec="aac")  # 可以根据需要调整fps值
+    final_clip.write_videofile(reulst_path+'/'+new_path.rsplit('/', 1)[-1]+".mp4", fps=24,audio_codec="aac")  # 可以根据需要调整fps值
 
     return new_path+".mp4"
 
@@ -112,6 +112,6 @@ def merge_vedio(image_dir_path,audio_dir_path,parent):
 if __name__ == '__main__':
     # lists =os.listdir('../data/data_image/少年歌行第一章/少年歌行第一章')
     # print(lists)
-    merge_vedio("..\\data\\data_image\\少年歌行第一章\\少年歌行第一章","..\\data\\data_audio\\少年歌行第一章\\少年歌行第一章","ceshi")
+    merge_vedio("../data/data_image/少年歌行第一章/少年歌行第一章","../data/data_audio/少年歌行第一章/少年歌行第一章","ceshi")
 
 

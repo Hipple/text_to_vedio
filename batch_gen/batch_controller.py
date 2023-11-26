@@ -51,7 +51,7 @@ def load_data_text(path):
         df = df.append(new_row, ignore_index=True)
     new_path = path.replace("data_split","data_prompt")
 
-    parent_path = new_path.rsplit('\\', 1)[0]
+    parent_path = new_path.rsplit('/', 1)[0]
 
     if not os.path.exists(parent_path):
         os.makedirs(parent_path)
@@ -66,10 +66,10 @@ def split_data_process(path,parent):
         content = [x.strip().replace("\n","") for x in content if len(x.strip()) > 0]
         # 创建新的文件保存切割后的文件
         each_df = pd.DataFrame(content,columns=["text"])
-        data_csv_path = project_root+"\\data\\data_split\\"+ parent
+        data_csv_path = project_root+"/data/data_split/"+ parent
         if not os.path.exists(data_csv_path):
             os.mkdir(data_csv_path)
-        csv_save_path =data_csv_path +'\\'+ df["title"][i] + ".csv"
+        csv_save_path =data_csv_path +'/'+ df["title"][i] + ".csv"
         each_df.to_csv(csv_save_path,index=False)
     return data_csv_path
 
@@ -77,7 +77,7 @@ def split_data_process(path,parent):
 def bach_gen_video(filepath,parent_name):
     parent_name = parent_name.split('.csv')[0]
     sourcepath = split_data_process(filepath,parent_name)
-    file_path = [sourcepath+'\\'+item for item in os.listdir(sourcepath)]
+    file_path = [sourcepath+'/'+item for item in os.listdir(sourcepath)]
     # 生成提示词
     for item in file_path :
         load_data_text(item)
@@ -93,11 +93,11 @@ def bach_gen_video(filepath,parent_name):
 
     image_file =[item.split('.csv')[0].replace('data_prompt','data_image') for item in prompt_file]
     audio_file = [item.replace('data_image','data_audio')for item in image_file]
-    result='\\'
+    result='/'
     for i in range(len(image_file)):
         result = merge_vedio(image_file[i],audio_file[i],parent_name)
 
-    return result.rsplit('\\', 1)[0]
+    return result.rsplit('/', 1)[0]
 
 
 

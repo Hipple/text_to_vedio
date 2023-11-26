@@ -30,19 +30,19 @@ project_root = os.path.dirname(current_file_path)
 while not os.path.isfile(os.path.join(project_root, 'README.md')):
     project_root = os.path.dirname(project_root)
 
-app = Flask(__name__,static_folder=project_root+"\\static", template_folder=project_root+"\\templates")
+app = Flask(__name__,static_folder=project_root+"/static", template_folder=project_root+"/templates")
 
 
 @app.route('/')
 def index():
-    data = pd.read_csv(project_root+'\\config\\data_1.csv')
+    data = pd.read_csv(project_root+'/config/tts_config.csv')
     table = data.to_html(index=False, table_id="my-table")
     return render_template('index.html',table=table)
 
 
 @app.route('/config')
 def config():
-    data = pd.read_csv(project_root+'\\config\\data_1.csv')
+    data = pd.read_csv(project_root+'/config/tts_config.csv')
     table = data.to_html(index=False, table_id="my-table")
     return render_template('config.html',table=table)
 
@@ -57,7 +57,7 @@ def video():
 
 @app.route('/file')
 def file():
-    data = pd.read_csv(project_root+"\\data\\data_source\\data_list\\data_list.csv")
+    data = pd.read_csv(project_root+"/data/data_source/data_list/data_list.csv")
     list = []
     for _, row in data.iterrows():
         list.append({'filename': row['filename'], 'gen_status': row['gen_status'], 'video_path': row['video_path']})
@@ -68,7 +68,7 @@ def file():
 def save_data():
     table_data = request.json
     df = pd.DataFrame(table_data, columns=['Column1', 'Column2'])  # 替换为实际的列名
-    df.to_csv(project_root+'\\config\\data_1.csv', index=False,header=False)  # 将 DataFrame 保存为 CSV 文件
+    df.to_csv(project_root+'/config/tts_config.csv', index=False,header=False)  # 将 DataFrame 保存为 CSV 文件
 
     return '数据保存成功！'
 
@@ -76,7 +76,7 @@ def save_data():
 
 
 def load_data():
-    data = pd.read_csv(project_root+"\\config\\data_1.csv")
+    data = pd.read_csv(project_root+"/config/tts_config.csv")
     return data
 
 def open_browser():
@@ -95,13 +95,13 @@ def upload():
     wb = load_workbook(file)
     sheet = wb.active
     df = pd.DataFrame(sheet.values)
-    filepath = project_root+'\\data\\data_source\\data\\'+str(current_date)+'.csv'
+    filepath = project_root+'/data/data_source/data/'+str(current_date)+'.csv'
     df.to_csv(filepath, index=False,header=False)
 
-    data = pd.read_csv(project_root+"\\data\\data_source\\data_list\\data_list.csv")
+    data = pd.read_csv(project_root+"/data/data_source/data_list/data_list.csv")
     new_row = {'filename': str(current_date)+'.csv', 'gen_status': '未生成', 'video_path': '无'}
     data = data.append(new_row, ignore_index=True)
-    data.to_csv(project_root+"\\data\\data_source\\data_list\\data_list.csv",  index=False)
+    data.to_csv(project_root+"/data/data_source/data_list/data_list.csv",  index=False)
 
     list = []
     for _, row in data.iterrows():
@@ -115,11 +115,11 @@ def upload():
 
 @app.route('/delete', methods=['POST'])
 def delete_row():
-    data = pd.read_csv(project_root+'\\data\\data_source\\data_list\\data_list.csv')
+    data = pd.read_csv(project_root+'/data/data_source/data_list/data_list.csv')
     row_index = int(request.form['index'])  # 获取要删除的行索引
     data.drop(row_index, inplace=True)  # 从 Pandas 数据中删除行
     data.reset_index(drop=True, inplace=True)  # 重新设置索引
-    data.to_csv(project_root+'\\data\\data_source\\data_list\\data_list.csv', index=False)  # 保存更新后的数据到文件
+    data.to_csv(project_root+'/data/data_source/data_list/data_list.csv', index=False)  # 保存更新后的数据到文件
     list = []
     for _, row in data.iterrows():
         list.append({'filename': row['filename'], 'gen_status': row['gen_status'], 'video_path': row['video_path']})
@@ -127,12 +127,12 @@ def delete_row():
 
 @app.route('/view', methods=['GET'])
 def viewRow():
-    data = pd.read_csv(project_root+'\\data\\data_source\\data_list\\data_list.csv')
+    data = pd.read_csv(project_root+'/data/data_source/data_list/data_list.csv')
     new_index = int(request.args.get('index'))
     # 根据索引获取指定行数据
     row = data.iloc[new_index][0]
     # 返回 JSON 格式的数据y
-    file_path=project_root+'\\data\\data_source\\data\\'+row
+    file_path=project_root+'/data/data_source/data/'+row
 
     pdata = pd.read_csv(file_path)
     pdata.fillna("", inplace=True)
@@ -157,17 +157,17 @@ def single_gen_video():
 
 @app.route('/batch', methods=['GET'])
 def batch_gen_video():
-    data = pd.read_csv(project_root+'\\data\\data_source\\data_list\\data_list.csv')
+    data = pd.read_csv(project_root+'/data/data_source/data_list/data_list.csv')
     new_index = int(request.args.get('index'))
     # 根据索引获取指定行数据
     row = data.iloc[new_index][0]
     # 返回 JSON 格式的数据
-    file_path = project_root+'\\data\\data_source\\data\\' + row
+    file_path = project_root+'/data/data_source/data/' + row
     video_path = bach_gen_video(file_path,row)
 
     data.iloc[new_index, 1]='已生成'
     data.iloc[new_index, 2] = video_path
-    data.to_csv(project_root+"\\data\\data_source\\data_list\\data_list.csv",  index=False)
+    data.to_csv(project_root+"/data/data_source/data_list/data_list.csv",  index=False)
     list = []
     for _, row in data.iterrows():
         list.append({'filename': row['filename'], 'gen_status': row['gen_status'], 'video_path': row['video_path']})
@@ -180,8 +180,5 @@ def batch_gen_video():
 
 
 if __name__ == '__main__':
-    # 创建一个新线程来打开浏览器
-    thread = threading.Timer(1,open_browser)
-    thread.start()
     app.run()
     # load_data()
